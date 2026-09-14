@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CalendarIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
 
 const toDateValue = (value: string) => {
   if (!value) return undefined
   const [year, month, day] = value.split('-').map(Number)
   if (!year || !month || !day) return undefined
-  return new Date(year, month - 1, day)
+  const date = new Date(year, month - 1, day)
+  return Number.isNaN(date.getTime()) ? undefined : date
 }
 
 const toDateString = (date: Date | undefined) => {
@@ -22,18 +22,68 @@ const toDateString = (date: Date | undefined) => {
   return `${year}-${month}-${day}`
 }
 
+const toDisplayValue = (date: Date | undefined) => (date ? date.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '')
+
+// Parses flexible manual typing like "9/15/2024" or "09-15-2024" into an ISO date string.
+const parseTypedDate = (text: string) => {
+  const match = text.trim().match(/^(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})$/)
+  if (!match) return null
+  const month = Number(match[1])
+  const day = Number(match[2])
+  const year = Number(match[3])
+  const date = new Date(year, month - 1, day)
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null
+  return toDateString(date)
+}
+
 function DateField({ id, label, value, onChange, fromYear, toYear }: { id: string; label: string; value: string; onChange: (value: string) => void; fromYear: number; toYear: number }) {
   const [open, setOpen] = useState(false)
   const selected = toDateValue(value)
+  const [text, setText] = useState(toDisplayValue(selected))
+
+  useEffect(() => {
+    setText(toDisplayValue(selected))
+  }, [value])
+
+  const commitTypedText = () => {
+    if (!text.trim()) {
+      onChange('')
+      return
+    }
+    const parsed = parseTypedDate(text)
+    if (parsed) {
+      onChange(parsed)
+    } else {
+      setText(toDisplayValue(selected))
+    }
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <label className="sr-only" htmlFor={id}>{label}</label>
-      <PopoverTrigger
-        render={<Button id={id} type="button" variant="outline" className={cn('h-auto justify-start gap-1.5 rounded border-border bg-background px-2 py-1 text-sm font-normal', !value && 'text-muted-foreground')} />}
-      >
-        <CalendarIcon className="size-3.5" data-icon="inline-start" />
-        {selected ? selected.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'mm/dd/yyyy'}
-      </PopoverTrigger>
+      <InputGroup className="h-auto w-[150px] rounded border-border bg-background">
+        <InputGroupInput
+          id={id}
+          placeholder="mm/dd/yyyy"
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          onBlur={commitTypedText}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              commitTypedText()
+            }
+          }}
+          className="px-2 py-1 text-sm"
+        />
+        <InputGroupAddon align="inline-end" className="pr-1">
+          <PopoverTrigger
+            render={<InputGroupButton type="button" size="icon-xs" variant="ghost" aria-label={`Open ${label.toLowerCase()} calendar`} />}
+          >
+            <CalendarIcon />
+          </PopoverTrigger>
+        </InputGroupAddon>
+      </InputGroup>
       <PopoverContent className="w-auto p-0" align="end">
         <Calendar
           mode="single"
