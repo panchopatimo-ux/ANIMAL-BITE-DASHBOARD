@@ -7,8 +7,8 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
 export const metadata: Metadata = {
-  title: 'Animal Bite Surveillance Dashboard',
-  description: 'Live animal bite case monitoring for Batanes General Hospital, powered by KoboToolbox.',
+  title: 'Animal Bite Center | Batanes General Hospital',
+  description: 'Animal bite case monitoring and surveillance for the Animal Bite Center of Batanes General Hospital, powered by KoboToolbox.',
   generator: 'v0.app',
   icons: {
     icon: [
