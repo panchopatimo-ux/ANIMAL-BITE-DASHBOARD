@@ -13,19 +13,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ChatGPT%20Image%20Sep%2015%2C%202026%2C%2008_21_18%20AM-7FBoWFov6QNYJaVvN5YiN0FnbtTyJd.png',
+        type: 'image/png',
       },
     ],
-    apple: '/apple-icon.png',
+    apple: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ChatGPT%20Image%20Sep%2015%2C%202026%2C%2008_21_18%20AM-7FBoWFov6QNYJaVvN5YiN0FnbtTyJd.png',
   },
 }
 
