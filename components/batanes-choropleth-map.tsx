@@ -16,7 +16,15 @@ const RAMP = ['#ffffb2', '#fecc5c', '#fd8d3c', '#f03b20', '#bd0026']
 const NO_DATA_COLOR = '#e2e8f0'
 const BOUNDARY_COLOR = '#1f2937'
 
-const normalize = (value: string) => value.trim().toUpperCase()
+const MUNICIPALITY_ALIASES: Record<string, string> = {
+  BASCO__CAPITAL: 'BASCO',
+  SATANG: 'SABTANG',
+}
+
+const normalize = (value: string) => {
+  const normalized = value.trim().toUpperCase()
+  return MUNICIPALITY_ALIASES[normalized] ?? normalized
+}
 
 function getBreaks(counts: number[]) {
   const nonZero = counts.filter((count) => count > 0)
